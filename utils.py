@@ -34,7 +34,7 @@ import importlib, sys, subprocess
 
 def pip_save_requirements(packages:list):
   """
-    crea file requirement.txt dalla lista di packages
+    crea file requirements.txt dalla lista di packages
 
     param: packages lista moduli installati
   """
