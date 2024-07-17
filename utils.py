@@ -32,6 +32,15 @@ def unzip(zip_path, file=None, dest='./'):
 
 import importlib, sys, subprocess
 
+def pip_save_requirements(packages:list):
+  """
+    crea file requirement.txt dalla lista di packages
+
+    param: packages lista moduli installati
+  """
+  with open('requirements.txt','w+t') as fo:
+    for module in packages:
+      fo.write(module+'\n')
 
 def pip_install(packages):
   """
@@ -63,23 +72,25 @@ def pip_install(packages):
 
 
 if __name__ == "__main__":
-   print("**",__name__,"**")
+  print("**",__name__,"**")
 
-   # url download
-   download_url('https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip',
+  # url download
+  download_url('https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip',
                 save_path='zip/sample.zip')
 
-   # unzip
-   # unzip('zip/sample.zip','sample.txt','zip/')
-   unzip('zip/sample.zip',dest='zip/')
+  # unzip
+  # unzip('zip/sample.zip','sample.txt','zip/')
+  unzip('zip/sample.zip',dest='zip/')
 
-   ## pip_install
-   lista=[
+  ## pip_install
+  lista=[
       "datasets==2.11.0",
       "dload"
-   ]
+  ]
 
-   # pip_install(lista)
-   # oppure...
-
-   pip_install('dload')
+  # pip_install(lista)
+  # oppure...
+  # pip_install('dload')
+  # o
+  if pip_install('dload')>0:
+    pip_save_requirements(lista)
