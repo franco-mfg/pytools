@@ -16,7 +16,8 @@ class OllamaRAG:
                llm_model="phi3:mini",
                format_docs=None,
                json=False,
-               multiquery=False):
+               multiquery=False,
+               show_progress=False):
 
     self.db=db
 
@@ -26,7 +27,7 @@ class OllamaRAG:
     else:
       self.llm=ChatOllama(model=llm_model)
 
-    self.ef=OllamaEmbeddings(model="nomic-embed-text")
+    self.ef=OllamaEmbeddings(model="nomic-embed-text",show_progress=show_progress)
 
     if format_docs is None:
       self.format_docs=lambda docs: "\n\n".join(doc.page_content for doc in docs)
