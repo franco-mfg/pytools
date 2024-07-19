@@ -10,25 +10,26 @@ if ! [ -f /usr/local/bin/ollama ]; then
   ollama serve &
   sleep 10
 
-  echo ************************************
+  echo "--------------------------------"
   echo        Installo model embed
-  echo ************************************
+  echo "--------------------------------"
   ollama pull nomic-embed-text
-  sleep 15
+  sleep 12
 
   if [ -z "$1" ]; then
     MODEL = "phi3:mini"
   else
     MODEL = "$1"
   fi
-  echo ************************************
+
+  echo "--------------------------------"
   echo     run model  $MODEL
-  echo ************************************
+  echo "--------------------------------"
   ollama run $MODEL
 
 else
-  echo ************************************
+  echo "--------------------------------"
   echo       Ollama già installato
-  echo ************************************
+  echo "--------------------------------"
   ollama ps
 fi
