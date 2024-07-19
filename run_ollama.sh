@@ -17,9 +17,9 @@ if ! [ -f /usr/local/bin/ollama ]; then
   sleep 12
 
   if [ -z "$1" ]; then
-    MODEL = "phi3:mini"
+    MODEL="phi3:mini"
   else
-    MODEL = "$1"
+    MODEL="$1"
   fi
 
   echo "--------------------------------"
