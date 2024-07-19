@@ -1,4 +1,4 @@
-# Qwen2:1.5B
+# qwen2:1.5B
 # rag class
 from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
@@ -27,7 +27,7 @@ class OllamaRAG:
     else:
       self.llm=ChatOllama(model=llm_model)
 
-    self.ef=OllamaEmbeddings(model="nomic-embed-text",show_progress=show_progress)
+    self.db.embeddings.show_progress=show_progress
 
     if format_docs is None:
       self.format_docs=lambda docs: "\n\n".join(doc.page_content for doc in docs)
