@@ -40,6 +40,7 @@ def pip_save_requirements(packages:list):
   """
   with open('requirements.txt','w+t') as fo:
     for module in packages:
+      module=module if module.count('!')==0 else module.split('!')[0]
       fo.write(module+'\n')
 
 def pip_install(packages):
@@ -67,7 +68,7 @@ def pip_install(packages):
 
     # in caso di moduli con versione -> mudulo==1.2.3
     s=module if module.count('==')==0 else module.split('==')[0]
-    
+
     s=s.replace('-','_') if top_level is None else top_level
     installed = importlib.util.find_spec(s) != None
     if installed:
