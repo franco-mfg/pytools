@@ -57,9 +57,18 @@ def pip_install(packages):
 
   ret=0
   for module in packages:
+    # in caso di modili con toplevel diverso dal modulo
+    # caso ipython che ha come toplevel IPython
+    top_level=None
+    if module.count('!')==1:
+       t=module.split('!')
+       module=t[0]
+       top_level=t[1]
+
     # in caso di moduli con versione -> mudulo==1.2.3
     s=module if module.count('==')==0 else module.split('==')[0]
-    s=s.replace('-','_')
+    
+    s=s.replace('-','_') if top_level is None else top_level
     installed = importlib.util.find_spec(s) != None
     if installed:
       print(f'module {module} is installed')
