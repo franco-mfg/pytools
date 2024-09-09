@@ -39,25 +39,42 @@ class OllamaRAG:
 
     self.set_prompt()
     self.set_multiprompt()
+    self.set_multiquery(multiquery)
 
+
+  def set_multiquery(self,multiquery:bool):
     if multiquery:
       self.retriever=MultiQueryRetriever.from_llm(
-        retriever=db.as_retriever(),
+        retriever=self.db.as_retriever(),
         llm=self.llm,
         prompt=self.multi_prompt
       )
     else:
-      self.retriever=db.as_retriever()
+      self.retriever=self.db.as_retriever()
 
-  def query(self,query:str):
-    chain= (
-      {"context": self.retriever | self.format_docs,
-      "question": RunnablePassthrough()
+  def get_chain(self):
+    chain=(
+      {
+        "context": self.retriever | self.format_docs,
+        "question": RunnablePassthrough()
       } |
       self.prompt |
       self.llm |
       StrOutputParser()
     )
+    return chain
+
+  def query(self,query:str):
+    # chain= (
+    #   {"context": self.retriever | self.format_docs,
+    #   "question": RunnablePassthrough()
+    #   } |
+    #   self.prompt |
+    #   self.llm |
+    #   StrOutputParser()
+    # )
+    chain=self.get_chain()
+
     return chain.invoke({"question": query})
 
   def set_prompt(self,prompt:str=None):
