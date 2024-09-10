@@ -1,12 +1,18 @@
-import sqlite3, pandas as pd
+import os, sqlite3, pandas as pd
 
 class SqliteDB:
+  """
+    implementation classe for sqlite3 files
+
+    usage: db=SqliteDB('file.db')
+  """
   def __init__(self, db_file):
     self.db_file = db_file
     self.conn = self.connect()
     self.cur = None
 
   def connect(self):
+    """ internal (open connection to db)"""
     return sqlite3.connect(self.db_file, check_same_thread=False)
 
   def __del__(self):
@@ -15,27 +21,53 @@ class SqliteDB:
       self.conn.close()
       self.conn=None
 
-    if self.cur is not None:
-      self.cur.close()
-      self.cur=None
+    # if self.cur is not None:
+    #   self.cur.close()
+    #   self.cur=None
 
   def execute(self, query, params=None):
-    self.cur = self.conn.cursor()
+    """
+      execute a query
+
+      usage: db.execute('sql query ? ?',(param1, param2))
+      note if only 1 parameter use (param1,)
+    """
+    cur = self.conn.cursor()
+
     if params is None:
-      self.cur.execute(query)
+      cur.execute(query)
     else:
-      self.cur.execute(query, params)
+      cur.execute(query, params)
+
     self.conn.commit()
-    return self.cur
+
+    return cur
 
   def table_as_pd(self, table_name:str):
+    """
+      return a table as a pd dataset
+
+      use: db.table_as_pd('tablename')
+    """
     return self.query_as_pd(f"SELECT * FROM {table_name}")
 
   def query_as_pd(self, query, params=None):
+    """
+      return a query as a pd dataset
+
+      use: db.query_as_pd('query ?', (parameter1,))
+    """
     return pd.read_sql_query(query, self.conn, params=params)
 
 
 class SqliteChatHistory:
+  """
+    implement an interface for LLM chat with history
+
+    usage: chatHistory=SqliteChatHistory(fname)
+
+    if fname is None the file created is: sqlite_chat_history.db
+  """
   def __init__(self, db_file='sqlite_chat_history.db'):
     if not os.path.exists(db_file):
       schema="""\
@@ -52,7 +84,12 @@ class SqliteChatHistory:
     else:
       self.db=SqliteDB(db_file)
 
-  def get_chat_history_str(self,sid:str) ->str :
+  def get_chat_history_list(self,sid:str) ->list[str] :
+    """
+      returns the complete chat history of sid
+
+      usage: chatList=get_chat_history_list('theID)
+    """
     chat_history=[]
 
     cursor=self.db.execute(
@@ -66,6 +103,11 @@ class SqliteChatHistory:
     return chat_history
 
   def save_chat_history(self, sid:str, question:str, answer:str):
+      """
+        insert new data to the chat history
+
+        usage: save_chat_history(sid,'question','answer')
+      """
       self.db.execute(
         "insert into message_store (session_id, question, answer) values (?,?,?)",
         (sid, question, answer)
