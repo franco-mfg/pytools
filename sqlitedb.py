@@ -9,6 +9,7 @@ class SqliteDB:
   def __init__(self, db_file):
     self.db_file = db_file
     self.conn = self.connect()
+    self.conn.row_factory = sqlite3.Row
     self.cur = None
 
   def connect(self):
@@ -84,11 +85,11 @@ class SqliteChatHistory:
     else:
       self.db=SqliteDB(db_file)
 
-  def get_chat_history_list(self,sid:str) ->list[str] :
+  def get_chat_history_list(self, sid:str, fnCall=None) ->list :
     """
       returns the complete chat history of sid
 
-      usage: chatList=get_chat_history_list('theID)
+      usage: chatList=get_chat_history_list('theID',function_to_call)
     """
     chat_history=[]
 
@@ -96,9 +97,14 @@ class SqliteChatHistory:
       "select * from message_store where session_id=? order by id",
       (sid,)
     )
-
+    # By default, sqlite3 represents each row as a tuple.
+    # If a tuple does not suit your needs, you can use
+    # the sqlite3.Row class or a custom row_factory.
     for row in cursor.fetchall():
-      print(row)
+      if fnCall is None:
+        chat_history.extend((row['question'], row['answer']))
+      else:
+        chat_history.extend(fnCall(row['question'], row['answer']))
 
     return chat_history
 
@@ -113,6 +119,11 @@ class SqliteChatHistory:
         (sid, question, answer)
       )
 
+def fn2call(question,answer):
+  x=f'({question}, {answer})'
+  print('x:',x)
+  return x
+
 if __name__ == "__main__":
   print('*** main ***')
   # from utils import download_url, unzip
@@ -121,7 +132,14 @@ if __name__ == "__main__":
 
   chatdb=SqliteChatHistory()
 
-  chatdb.save_chat_history('1','domanda','risposta')
+  # chatdb.save_chat_history('1','domanda11','risposta1')
+  # chatdb.save_chat_history('1','domanda12','risposta2')
+  # chatdb.save_chat_history('2','domanda21','risposta1')
+
+  x=fn2call
+  x('uno', 'due')
+  print(chatdb.get_chat_history_list('1',fn2call))
+  print(chatdb.get_chat_history_list('2'))
 
   exit(0)
 
