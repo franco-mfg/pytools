@@ -9,15 +9,30 @@ class Debug:
     if parameter is False then nothing is printed
   """
   def __init__(self,debug=True) -> None:
+    # print('Debug:','ON' if debug else 'OFF')
     self.__DEBUG__=debug
+
+  def on(self):
+    """
+    True debug is enabled
+
+    usage:
+    dbg=Debug(True)
+
+    if dbg.on():
+      operation_if_on
+
+    """
+    return self.__DEBUG__==True
 
   def print(self,*args):
     """
     usare al posto di print(...)
     stampa alcun messaggio.
     """
+    # print('Debug:','ON' if self.__DEBUG__ else 'OFF')
 
-    if self.__DEBUG__:
+    if not self.__DEBUG__:
       return None
 
     res=''
