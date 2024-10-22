@@ -1,14 +1,21 @@
 #!/bin/bash
 
-MODEL="$1"
+# run_ollama.sh [model==phi3:mini] [ollama cmd == pull else run]
 
-echo $MODEL
+MODEL="$1"
+RUN='pull'
+
+if [ -z "$2" ]; then
+  RUN='run'
+fi
+
+echo $MODEL, $RUN
 
 if ! [ -f /usr/local/bin/ollama ]; then
   curl -fsSL https://ollama.com/install.sh | sh
 
   ollama serve &
-  sleep 10
+  sleep 5
 
   echo "--------------------------------"
   echo        Installo model embed
@@ -23,9 +30,9 @@ if ! [ -f /usr/local/bin/ollama ]; then
   fi
 
   echo "--------------------------------"
-  echo     run model  $MODEL
+  echo     pull model $MODEL
   echo "--------------------------------"
-  ollama run $MODEL
+  ollama pull $MODEL
 
 else
   echo "--------------------------------"

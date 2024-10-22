@@ -15,7 +15,7 @@ echo "your ip/pwd is: " $IP
 
 npx localtunnel --port $PORT &
 
-sleep(5)
+sleep 5
 
 echo "--------------------------"
 echo "USE fg <enter> then ctrl-c to stop"
